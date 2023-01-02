@@ -24,6 +24,13 @@ class ShapeSlave{
             default: return -1;
         }
     }
+    getInfoBoundary():number[]{
+       let BQ= this.domE.getBoundingClientRect();
+       console.log("boundaries:");
+       console.log(BQ.right, BQ.bottom, BQ.left, BQ.top);
+       console.log("height, width:", BQ.height, BQ.width);
+       return [BQ.right, BQ.bottom, BQ.left, BQ.top];
+    }
     applyTransformation():void{
         this.domE.style.transform=`
         translate3d(${this.transformed[0]}px, ${this.transformed[1]}px, ${this.transformed[2]}px)
@@ -100,8 +107,8 @@ function constructionString(forma:shape, measures: number[]):string{
 //ritorna la stringa da aggiungere al body per creare l'elemento
 //corrispondente ai parametri
 switch(forma){
-    case 'cerchio': return `<div class='shape' id="Fig-${shapeIndex}" style=" background-color:green; height:${measures[0]*100}px; width:${measures[0]*100}px; border-radius:50%"> </div>`; 
-    case 'rettangolo':return `<div class='shape' id="Fig-${shapeIndex}" style=" background-color: grey;  height: ${measures[0]*100}px; width:${measures[1]*100}px;"></div>`;
+    case 'cerchio': return `<div class='shape' id="Fig-${shapeIndex}" style=" background-color:green; height:${measures[0]*100}px; width:${measures[0]*100}px; border-radius:50%"> ${shapeIndex} </div>`; 
+    case 'rettangolo':return `<div class='shape' id="Fig-${shapeIndex}" style="position:absolute; background-color: grey;  height: ${measures[0]*100}px; width:${measures[1]*100}px"> ${shapeIndex}</div>`;
     case 'cubo': return ''; //ATTENZIONE!! Inserire cubo
     default: return 'forma non trovata';
 }
@@ -153,17 +160,61 @@ class Quadrato extends Rettangolo{
 
 //area sperimentazione - 1
 let cerchio = new Cerchio(1);
-let rettangolo= new Rettangolo(1,3);
 let quadrato = new Quadrato(1);
 let slaveCerchio= new ShapeSlave(cerchio);
 let slaveQuadrato=new ShapeSlave(quadrato);
 
-slaveCerchio.traslaAway();
-slaveCerchio.traslaDX();
-slaveQuadrato.ruotaXP();
 
 
+let BQ = slaveQuadrato.domE.getBoundingClientRect();
+window.addEventListener("keyup", function(e){
+    switch(e.key){//trasla
+        case '6':  slaveQuadrato.traslaDX(); slaveQuadrato.getInfoBoundary(); break;
+        case '4':  slaveQuadrato.traslaSX(); slaveQuadrato.getInfoBoundary(); break;
+        case '8':  slaveQuadrato.traslaUP(); slaveQuadrato.getInfoBoundary(); break;
+        case '2':  slaveQuadrato.traslaDN(); slaveQuadrato.getInfoBoundary(); break;       
+    }
+});
+
+//secondo livello 
+
+interface Civis{ //un cittadino libero: consiste di una Shape e di un ShapeSlave
+    shape:Shape;
+    slave:ShapeSlave;
+}
 
 
+class Dio{ //colui che crea e distrugge
 
 
+    creazione(s:shape,measures:number[]):Civis{ //ritorna istanza di Shape con ShapeSlave associato
+        switch(s){
+            case 'cerchio': let c=new Cerchio(measures[0]); return {shape:c, slave:new ShapeSlave(c)}; 
+            case 'rettangolo':let r=new Rettangolo(measures[0], measures[1]); return {shape:r, slave:new ShapeSlave(r)};
+            default : let blowup= new Rettangolo(100,100); return {shape:blowup, slave:new ShapeSlave(blowup)};        
+        }
+        }
+}
+
+class consulenzaDiCoppiaRettangoli{
+    genitore1:Civis;
+    genitore2:Civis;
+    constructor(genitore1:Civis, genitore2:Civis){
+        this.genitore1=genitore1;
+        this.genitore2=genitore2;
+    }
+
+    verifyIntersection():boolean{
+    let [r1, b1,l1,t1]= this.genitore1.slave.getInfoBoundary();
+    let [r2,b2,l2,t2]=this.genitore2.slave.getInfoBoundary();
+    if(t2<=b1&&t1<=b2&&l2<=r1&&l1<=r2){
+        console.log("intersection");
+        return true;
+    }else {return false;}
+    }
+
+}
+
+let fuffy = new Dio();
+
+let carlina= fuffy.creazione('rettangolo', [1,1]);
