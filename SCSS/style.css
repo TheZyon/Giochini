@@ -1,0 +1,6 @@
+.shape {
+  margin: 2rem;
+}
+.shape:hover {
+  filter: brightness(150%);
+}/*# sourceMappingURL=style.css.map */
