@@ -6,7 +6,6 @@ let shapeArray = []; //contiene le figure create
 class ShapeSlave {
     constructor(shape) {
         this.shape = shape;
-        this.domE = document.getElementById(`Fig-${this.shape.shapeIndex}`);
         this.transformed = [0, 0, 0, 0, 0, 0];
     }
     calcolaArea() {
@@ -17,15 +16,18 @@ class ShapeSlave {
             default: return -1;
         }
     }
+    getDomElement() {
+        return document.getElementById(`Fig-${this.shape.shapeIndex}`);
+    }
     getInfoBoundary() {
-        let BQ = this.domE.getBoundingClientRect();
+        let BQ = document.getElementById(`Fig-${this.shape.shapeIndex}`).getBoundingClientRect();
         console.log("boundaries:");
         console.log(BQ.right, BQ.bottom, BQ.left, BQ.top);
         console.log("height, width:", BQ.height, BQ.width);
         return [BQ.right, BQ.bottom, BQ.left, BQ.top];
     }
     applyTransformation() {
-        this.domE.style.transform = `
+        document.getElementById(`Fig-${this.shape.shapeIndex}`).style.transform = `
         translate3d(${this.transformed[0]}px, ${this.transformed[1]}px, ${this.transformed[2]}px)
         rotateX(${this.transformed[3]}deg)
         rotateY(${this.transformed[4]}deg)
@@ -34,7 +36,6 @@ class ShapeSlave {
     traslaDX() {
         this.transformed[0] += 100;
         this.applyTransformation();
-        console.log(this.shape.domE);
     }
     traslaSX() {
         this.transformed[0] -= 100;
@@ -82,89 +83,68 @@ class ShapeSlave {
     }
 }
 ;
-function constructionString(forma, measures) {
+;
+function constructionString(forma, measures, color = 'grey') {
     //ritorna la stringa da aggiungere al body per creare l'elemento
     //corrispondente ai parametri
     switch (forma) {
-        case 'cerchio': return `<div class='shape' id="Fig-${shapeIndex}" style=" background-color:green; height:${measures[0] * 100}px; width:${measures[0] * 100}px; border-radius:50%"> ${shapeIndex} </div>`;
-        case 'rettangolo': return `<div class='shape' id="Fig-${shapeIndex}" style="position:absolute; background-color: grey;  height: ${measures[0] * 100}px; width:${measures[1] * 100}px"> ${shapeIndex}</div>`;
+        case 'cerchio': return `<div class='shape' id="Fig-${shapeIndex}" style=" background-color:${color}; height:${measures[0] * 100}px; width:${measures[0] * 100}px; border-radius:50%"> ${shapeIndex} </div>`;
+        case 'rettangolo': return `<div class='shape' id="Fig-${shapeIndex}" style=" background-color: ${color};  height: ${measures[0] * 100}px; width:${measures[1] * 100}px"> ${shapeIndex}</div>`;
         case 'cubo': return ''; //ATTENZIONE!! Inserire cubo
         default: return 'forma non trovata';
     }
 }
+;
 class Cerchio {
-    constructor(raggio) {
+    constructor(raggio, color) {
         this.forma = 'cerchio';
         this.measures = [raggio];
         this.shapeIndex = shapeIndex;
-        this.domE = this.creaNelDOM();
+        this.creaNelDOM(color);
         shapeIndex += 1;
     }
-    creaNelDOM() {
-        document.getElementById('shapes').innerHTML += constructionString(this.forma, this.measures);
-        return document.getElementById(`Fig-${shapeIndex}`);
+    creaNelDOM(color) {
+        document.getElementById('shapes').innerHTML += constructionString(this.forma, this.measures, color);
     }
 }
+;
 class Rettangolo {
-    constructor(base, altezza) {
+    constructor(base, altezza, color) {
         this.forma = 'rettangolo';
         this.measures = [base, altezza];
         this.shapeIndex = shapeIndex;
-        this.domE = this.creaNelDOM();
+        this.creaNelDOM(color);
         shapeIndex += 1;
     }
-    creaNelDOM() {
-        document.getElementById('shapes').innerHTML += constructionString(this.forma, this.measures);
-        return document.getElementById(`Fig-${shapeIndex}`);
+    creaNelDOM(color) {
+        document.getElementById('shapes').innerHTML += constructionString(this.forma, this.measures, color);
     }
 }
+;
 class Quadrato extends Rettangolo {
-    constructor(lato) {
-        super(lato, lato);
+    constructor(lato, color) {
+        super(lato, lato, color);
     }
 }
-//area sperimentazione - 1
-let cerchio = new Cerchio(1);
-let quadrato = new Quadrato(1);
-let slaveCerchio = new ShapeSlave(cerchio);
-let slaveQuadrato = new ShapeSlave(quadrato);
-let BQ = slaveQuadrato.domE.getBoundingClientRect();
-window.addEventListener("keyup", function (e) {
-    switch (e.key) { //trasla
-        case '6':
-            slaveQuadrato.traslaDX();
-            slaveQuadrato.getInfoBoundary();
-            break;
-        case '4':
-            slaveQuadrato.traslaSX();
-            slaveQuadrato.getInfoBoundary();
-            break;
-        case '8':
-            slaveQuadrato.traslaUP();
-            slaveQuadrato.getInfoBoundary();
-            break;
-        case '2':
-            slaveQuadrato.traslaDN();
-            slaveQuadrato.getInfoBoundary();
-            break;
-    }
-});
+;
 class Dio {
-    creazione(s, measures) {
+    creazione(s, measures, color) {
         switch (s) {
             case 'cerchio':
-                let c = new Cerchio(measures[0]);
-                return { shape: c, slave: new ShapeSlave(c) };
+                let c = new Cerchio(measures[0], color);
+                let s = new ShapeSlave(c);
+                return { shape: c, slave: s };
             case 'rettangolo':
-                let r = new Rettangolo(measures[0], measures[1]);
-                return { shape: r, slave: new ShapeSlave(r) };
+                let r = new Rettangolo(measures[0], measures[1], color);
+                let t = new ShapeSlave(r);
+                return { shape: r, slave: t };
             default:
                 let blowup = new Rettangolo(100, 100);
                 return { shape: blowup, slave: new ShapeSlave(blowup) };
         }
     }
 }
-class consulenzaDiCoppiaRettangoli {
+class ConsulenzaDiCoppiaRettangoli {
     constructor(genitore1, genitore2) {
         this.genitore1 = genitore1;
         this.genitore2 = genitore2;
@@ -173,13 +153,24 @@ class consulenzaDiCoppiaRettangoli {
         let [r1, b1, l1, t1] = this.genitore1.slave.getInfoBoundary();
         let [r2, b2, l2, t2] = this.genitore2.slave.getInfoBoundary();
         if (t2 <= b1 && t1 <= b2 && l2 <= r1 && l1 <= r2) {
-            console.log("intersection");
+            console.log("intersection!");
             return true;
         }
         else {
+            console.log("no intersection");
             return false;
         }
     }
 }
+/* zona sperimentazione - 2--->√ */
 let fuffy = new Dio();
-let carlina = fuffy.creazione('rettangolo', [1, 1]);
+let c0 = fuffy.creazione('cerchio', [1], 'blue');
+let r1 = fuffy.creazione('rettangolo', [1, 1]);
+let r2 = fuffy.creazione('rettangolo', [1, 1], 'red');
+r1.slave.traslaDX();
+let r3 = fuffy.creazione('rettangolo', [1, 2], 'green');
+r3.slave.traslaDX();
+r3.slave.traslaUP();
+let miriello = new ConsulenzaDiCoppiaRettangoli(r1, r2);
+r1.slave.traslaDN();
+miriello.verifyIntersection();

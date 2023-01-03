@@ -1,5 +1,6 @@
 .shape {
   margin: 2rem;
+  transition: 1s;
 }
 .shape:hover {
   filter: brightness(150%);
