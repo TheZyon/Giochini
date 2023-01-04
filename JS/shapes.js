@@ -1,5 +1,6 @@
 "use strict";
 //forme bidimensionali
+var _a;
 let shapeIndex = 0; //serve ad individuare id delle figure create
 let shapeArray = []; //contiene le figure create
 //I due elementi fondamentali
@@ -17,21 +18,49 @@ class ShapeSlave {
         }
     }
     getDomElement() {
-        return document.getElementById(`Fig-${this.shape.shapeIndex}`);
+        let t = document.getElementById(`Fig-${this.shape.shapeIndex}`);
+        if (t != null) {
+            return t;
+        }
+        else {
+            console.log("elemento non trovato!");
+            return document.body;
+        }
     }
     getInfoBoundary() {
-        let BQ = document.getElementById(`Fig-${this.shape.shapeIndex}`).getBoundingClientRect();
-        console.log("boundaries:");
-        console.log(BQ.right, BQ.bottom, BQ.left, BQ.top);
-        console.log("height, width:", BQ.height, BQ.width);
-        return [BQ.right, BQ.bottom, BQ.left, BQ.top];
+        let t = document.getElementById(`Fig-${this.shape.shapeIndex}`);
+        if (t != null) {
+            let BQ = t.getBoundingClientRect();
+            console.log("boundaries:");
+            console.log(BQ.right, BQ.bottom, BQ.left, BQ.top);
+            console.log("height, width:", BQ.height, BQ.width);
+            return [BQ.right, BQ.bottom, BQ.left, BQ.top];
+        }
+        else {
+            console.log("elemento del dom non trovato!");
+            return [-1];
+        }
     }
     applyTransformation() {
-        document.getElementById(`Fig-${this.shape.shapeIndex}`).style.transform = `
+        let t = document.getElementById(`Fig-${this.shape.shapeIndex}`);
+        if (t != null) {
+            t.style.transform = `
         translate3d(${this.transformed[0]}px, ${this.transformed[1]}px, ${this.transformed[2]}px)
         rotateX(${this.transformed[3]}deg)
         rotateY(${this.transformed[4]}deg)
         rotateZ(${this.transformed[5]}deg)`;
+        }
+        else {
+            console.log("elemento del dom da trasformare non trovato!");
+        }
+    }
+    position(x, y, z) {
+        this.transformed[0] = x;
+        this.transformed[1] = y;
+        if (z != undefined) {
+            this.transformed[2] = z;
+        }
+        this.applyTransformation();
     }
     traslaDX() {
         this.transformed[0] += 100;
@@ -104,7 +133,13 @@ class Cerchio {
         shapeIndex += 1;
     }
     creaNelDOM(color) {
-        document.getElementById('shapes').innerHTML += constructionString(this.forma, this.measures, color);
+        let t = document.getElementById('shapes');
+        if (t != null) {
+            t.innerHTML += constructionString(this.forma, this.measures, color);
+        }
+        else {
+            console.log("errore contenitore shapes non trovato");
+        }
     }
 }
 ;
@@ -117,7 +152,13 @@ class Rettangolo {
         shapeIndex += 1;
     }
     creaNelDOM(color) {
-        document.getElementById('shapes').innerHTML += constructionString(this.forma, this.measures, color);
+        let t = document.getElementById('shapes');
+        if (t != null) {
+            t.innerHTML += constructionString(this.forma, this.measures, color);
+        }
+        else {
+            console.log("errore contenitore shapes non trovato");
+        }
     }
 }
 ;
@@ -162,15 +203,38 @@ class ConsulenzaDiCoppiaRettangoli {
         }
     }
 }
-/* zona sperimentazione - 2--->√ */
+// zona sperimentazione - 2--->√    
 let fuffy = new Dio();
 let c0 = fuffy.creazione('cerchio', [1], 'blue');
 let r1 = fuffy.creazione('rettangolo', [1, 1]);
 let r2 = fuffy.creazione('rettangolo', [1, 1], 'red');
 r1.slave.traslaDX();
-let r3 = fuffy.creazione('rettangolo', [1, 2], 'green');
+let r3 = fuffy.creazione('rettangolo', [1, 1], 'green');
 r3.slave.traslaDX();
 r3.slave.traslaUP();
-let miriello = new ConsulenzaDiCoppiaRettangoli(r1, r2);
+let cons12 = new ConsulenzaDiCoppiaRettangoli(r1, r2);
 r1.slave.traslaDN();
-miriello.verifyIntersection();
+/* cons12.verifyIntersection(); */
+let cons13 = new ConsulenzaDiCoppiaRettangoli(r1, r3);
+/* cons13.verifyIntersection(); */
+r1.slave.position(0, 0, 0);
+r1.slave.position(400, 100, 0);
+let info = (_a = document.getElementById("shapes")) === null || _a === void 0 ? void 0 : _a.getBoundingClientRect();
+let [r, b, l, t] = [info === null || info === void 0 ? void 0 : info.right, info === null || info === void 0 ? void 0 : info.bottom, info === null || info === void 0 ? void 0 : info.left, info === null || info === void 0 ? void 0 : info.top];
+console.log(r, b, l, t);
+//mettere controlli per evitare che le forme vadano fuori dal bordo!!!
+//max trasl dx = 675
+// max trasl up = 0
+//max tras sx = 0
+//max trasl dn = 1100
+r1.slave.position(640, 0, 0);
+r1.slave.position(675, 0, 0);
+r2.slave.position(0, 0, 0);
+r3.slave.position(0, 1100, 0);
+class Game {
+    constructor(difficoltà, shiva) {
+        this.difficoltà = difficoltà;
+    }
+    inizializeSelf() {
+    }
+}

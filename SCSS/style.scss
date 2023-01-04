@@ -1,8 +1,22 @@
+
+body{
+    background-color: black;
+}
+
 .shape{
-    margin:2rem;
+    margin:0rem;
     &:hover{
         filter:brightness(150%);
     }
     transition: 1s;
+    position: absolute;
+}
+
+#shapes{
+    border-style: solid;
+    background-color: black;
+    height:1200px;
+    border-color: green;
+    border-width: 5px;
 }
 
