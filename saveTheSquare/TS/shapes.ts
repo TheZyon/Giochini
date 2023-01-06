@@ -556,7 +556,7 @@ window.addEventListener("mousedown", function () {
             });
             //3.
         this.initMovimentoNemici();
-        
+
         //metto i labels sui personaggi
         let baby = document.getElementById(`Fig-${shapeIndex - 1}`);
         if (baby != null) { baby.innerHTML = "B"; }
@@ -583,7 +583,6 @@ if (sessionStorage.getItem('n_partite') == null) {
     sessionStorage.setItem('n_partite', `0`);
 }
     
-
     gestisciSecondaPartita();
 
     function gestisciSecondaPartita(): void { //se n_partite è >0, inizia il gioco senza che si prema il pulsante PLAY
