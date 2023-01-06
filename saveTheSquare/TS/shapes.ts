@@ -10,6 +10,9 @@ let babyAudio = new Audio("../audio/eat.mp3");
 let playerBittenAudio = new Audio("../audio/cry.mp3");
 let audioVittoria = new Audio("../audio/slurp_v.mp3");
 let audioSconfitta = new Audio("../audio/slurp.mp3");
+window.addEventListener("mousedown", function () { 
+    crashAudio.play()
+});
 
 /* classi & interfacce */
     class ShapeSlave {//schiavo che sposta la forma assegnatagli, e calcola parametri
@@ -59,7 +62,7 @@ let audioSconfitta = new Audio("../audio/slurp.mp3");
         rotateX(${this.transformed[3]}deg)
         rotateY(${this.transformed[4]}deg)
         rotateZ(${this.transformed[5]}deg)`;
-            } else { console.log("elemento del dom da trasformare non trovato!"); }
+            }
             
         }
         position(x: number, y: number, z?: number): void {
@@ -362,69 +365,6 @@ let audioSconfitta = new Audio("../audio/slurp.mp3");
         }
     }
 
-    /* ZONA SPERIMENTAZIONE - 1 ---> √
-    
-    let cerchio = new Cerchio(1);
-    let quadrato = new Quadrato(1);
-    let retto = new Rettangolo(1, 2);
-    let slaveCerchio= new ShapeSlave(cerchio);
-    let slaveQuadrato=new ShapeSlave(quadrato);
-    let slaveRetto = new ShapeSlave(retto);
-    
-    window.addEventListener("keyup", function(e){
-        switch(e.key){//trasla
-            case '6':  slaveQuadrato.traslaDX(); slaveQuadrato.getInfoBoundary(); break;
-            case '4':  slaveQuadrato.traslaSX(); slaveQuadrato.getInfoBoundary(); break;
-            case '8':  slaveQuadrato.traslaUP(); slaveQuadrato.getInfoBoundary(); break;
-            case '2':  slaveQuadrato.traslaDN(); slaveQuadrato.getInfoBoundary(); break;       
-        }
-    });
-    
-    slaveCerchio.traslaDN();
-    slaveQuadrato.traslaDX();
-    slaveQuadrato.traslaDX();
-    slaveRetto.traslaDN();
-    slaveRetto.traslaDN();
-    slaveCerchio.traslaDN();
-    slaveQuadrato.traslaDN();
-    
-    */
-   
-    /* ZONA SPERIMENTAZIONE - 2 ---> √
-    
-    let fuffy = new Dio();
-    let c0 = fuffy.creazione('cerchio', [1], 'blue');
-    
-    let r1=fuffy.creazione('rettangolo', [1, 1]);
-    let r2 = fuffy.creazione('rettangolo', [1, 1], 'red');
-    r1.slave.traslaDX();
-    let r3 = fuffy.creazione('rettangolo', [1, 1], 'green'); 
-    r3.slave.traslaDX();
-    r3.slave.traslaUP();
-    let cons12 = new ConsulenzaDiCoppiaRettangoli(r1,r2);
-    r1.slave.traslaDN();
-    //cons12.verifyIntersection();
-    let cons13 = new ConsulenzaDiCoppiaRettangoli(r1, r3);
-    //cons13.verifyIntersection();
-    
-    
-    r1.slave.position(400, 100, 0);
-    
-    let info = document.getElementById("shapes")?.getBoundingClientRect();
-    let [r, b, l, t] = [info?.right, info?.bottom, info?.left, info?.top];
-    
-    console.log(r, b, l, t); 
-    
-    
-    //mettere controlli per evitare che le forme vadano fuori dal bordo!!!
-    //max trasl dx = 699
-    // max trasl up = 0
-    //max tras sx = 0
-    //max trasl dn = 1125
-    r1.slave.position(699, 0, 0);
-    r2.slave.position(0, 0, 0);
-    r3.slave.position(0, 1125, 0);*/
-
     /* Game */
 
     class Game {//classe che inizializza il gioco.
@@ -615,36 +555,77 @@ let audioSconfitta = new Audio("../audio/slurp.mp3");
                 }
             });
             //3.
-            this.initMovimentoNemici();
+        this.initMovimentoNemici();
+        
+        //metto i labels sui personaggi
+        let baby = document.getElementById(`Fig-${shapeIndex - 1}`);
+        if (baby != null) { baby.innerHTML = "B"; }
+        let mother = document.getElementById(`Fig-${0}`);
+        if (mother != null) { mother.innerHTML = "M"; }
+        arrayNemici.forEach(e => { e.slave.getDomElement().innerHTML="C"})
     }
     diluvioUniversale(): void { 
-        for (let i = 0; i < shapeIndex; i++)
-            fuffy.distruzione(i);
-    }
-    }
-
-let fuffy: Dio;
-let partita: Game;
-
-
-let playButton = document.getElementsByTagName("button")[0];
-
-playButton.addEventListener("mousedown", function () { 
-    if (partita != undefined) { 
-        partita.diluvioUniversale();
-        let messagginoInoIno = document.getElementById("alert");
-        if (messagginoInoIno != null) {
-            messagginoInoIno.style.zIndex = '1';
-        } else { console.log("alert non trovato nel dom!")}
+        if (campo != null) { campo.innerHTML = '';}
         
     }
-    fuffy = new Dio();
-    partita = new Game('easy', fuffy);
-    partita.aumentoSalute();
-    setInterval(function () {partita.manageInteractions() }, 200);  
+        
+    }
 
+/* main */
     
-});
+    let fuffy: Dio;
+    let partita: Game;
+    let int: number;
+    
+let playButton = document.getElementsByTagName("button")[0];
+    
+if (sessionStorage.getItem('n_partite') == null) {
+    sessionStorage.setItem('n_partite', `0`);
+}
+    
+
+    gestisciSecondaPartita();
+
+    function gestisciSecondaPartita(): void { //se n_partite è >0, inizia il gioco senza che si prema il pulsante PLAY
+    let n_partite: number;
+    let n_partiteStr = sessionStorage.getItem('n_partite');
+    if (n_partiteStr != null) {
+    n_partite = eval(n_partiteStr);
+    } else { n_partite = -1; }
+
+    if (n_partite > 0) { 
+                fuffy = new Dio();
+                partita = new Game('easy', fuffy);
+                int = setInterval(function () { partita.manageInteractions() }, 200);
+    }}
+
+
+    playButton.addEventListener("mousedown", function () { 
+
+        let n_partiteStr = sessionStorage.getItem('n_partite');
+        let n_partite: number = 0;
+
+        if (n_partiteStr != null) {
+            n_partite = eval(n_partiteStr);
+            
+            switch (n_partite) {
+            case 0:
+                fuffy = new Dio();
+                partita = new Game('easy', fuffy);
+                int = setInterval(function () { partita.manageInteractions() }, 200);
+                n_partite = 1;
+                sessionStorage.setItem('n_partite', `${n_partite}`);
+                break;
+            default: window.location.reload();   
+         }
+    
+        } else {
+            console.log("valore per n_partite non trovato in session storage");
+        }
+        
+        
+    
+    });
  
   
 

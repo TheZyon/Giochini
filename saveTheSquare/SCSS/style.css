@@ -75,7 +75,16 @@ button {
   border-width: 10px;
   font-size: 40px;
 }
+#shapes div:first-child {
+  color: red;
+  font-size: 40px;
+}
+#shapes div:last-child {
+  color: red;
+  font-size: 40px;
+}
 
+/* health bar */
 #health {
   margin-top: 3rem;
   margin-left: 7.5rem;
