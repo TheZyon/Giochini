@@ -8,9 +8,6 @@ let babyAudio = new Audio("../audio/eat.mp3");
 let playerBittenAudio = new Audio("../audio/cry.mp3");
 let audioVittoria = new Audio("../audio/slurp_v.mp3");
 let audioSconfitta = new Audio("../audio/slurp.mp3");
-window.addEventListener("mousedown", function () {
-    crashAudio.play();
-});
 /* classi & interfacce */
 class ShapeSlave {
     constructor(shape) {
@@ -154,6 +151,7 @@ class ShapeSlave {
        e producono audio crush
     */
     traslaDX_B1() {
+        var _a;
         if (campo != null) {
             let p = this.traslationPower;
             if (this.getInfoBoundary()[0] <= (campo === null || campo === void 0 ? void 0 : campo.getBoundingClientRect().right) - this.traslationPower) {
@@ -165,11 +163,16 @@ class ShapeSlave {
                 /*  console.log(this.traslationPower); */
                 this.traslaDX();
                 crashAudio.play();
+                let out = (_a = document.getElementById("out")) === null || _a === void 0 ? void 0 : _a.children[0];
+                if (out != null) {
+                    out.innerHTML = "OMG I have to quit drinking!";
+                }
             }
             this.traslationPower = p;
         }
     }
     traslaSX_B1() {
+        var _a;
         if (campo != null) {
             let p = this.traslationPower;
             if (this.getInfoBoundary()[2] >= (campo === null || campo === void 0 ? void 0 : campo.getBoundingClientRect().left) + this.traslationPower) {
@@ -179,11 +182,16 @@ class ShapeSlave {
                 this.traslationPower = this.getInfoBoundary()[2] - (campo === null || campo === void 0 ? void 0 : campo.getBoundingClientRect().left) - 4;
                 this.traslaSX();
                 crashAudio.play();
+                let out = (_a = document.getElementById("out")) === null || _a === void 0 ? void 0 : _a.children[0];
+                if (out != null) {
+                    out.innerHTML = "OMG I have to quit drinking!";
+                }
             }
             this.traslationPower = p;
         }
     }
     traslaUP_B1() {
+        var _a;
         if (campo != null) {
             let p = this.traslationPower;
             if (this.getInfoBoundary()[3] >= (campo === null || campo === void 0 ? void 0 : campo.getBoundingClientRect().top) + this.traslationPower) {
@@ -193,11 +201,16 @@ class ShapeSlave {
                 this.traslationPower = this.getInfoBoundary()[3] - (campo === null || campo === void 0 ? void 0 : campo.getBoundingClientRect().top) - 5;
                 this.traslaUP();
                 crashAudio.play();
+                let out = (_a = document.getElementById("out")) === null || _a === void 0 ? void 0 : _a.children[0];
+                if (out != null) {
+                    out.innerHTML = "OMG I have to quit drinking!";
+                }
             }
             this.traslationPower = p;
         }
     }
     traslaDN_B1() {
+        var _a;
         if (campo != null) {
             let p = this.traslationPower;
             /*       console.log(this.getInfoBoundary()[1], bottomBorderValue - this.traslationPower);
@@ -211,6 +224,10 @@ class ShapeSlave {
                 console.log(this.traslationPower);
                 this.traslaDN();
                 crashAudio.play();
+                let out = (_a = document.getElementById("out")) === null || _a === void 0 ? void 0 : _a.children[0];
+                if (out != null) {
+                    out.innerHTML = "OMG I have to quit drinking!";
+                }
             }
             this.traslationPower = p;
         }
@@ -476,7 +493,7 @@ class Game {
                 case n < this.arrayNemici.length:
                     if (result == true) {
                         if (out != undefined) {
-                            out.innerHTML = "sei stato morso";
+                            out.innerHTML = "OMG a communist!";
                         }
                         this.ferimento();
                     }
@@ -489,7 +506,7 @@ class Game {
                     break;
                 case n > this.arrayNemici.length: if (result == true) {
                     if (out != undefined) {
-                        out.innerHTML = "OMG the babyyy";
+                        out.innerHTML = "OMG my babyyy is getting eaten";
                         this.sconfitta();
                     }
                     break;
@@ -511,15 +528,12 @@ class Game {
             messagginoInoIno.innerHTML = ` 
             <p>Pomplimenti!</p>
             <p>Da molto tempo seguo con interesse 
-               la sua azienda,
-               che trovo molto stimolante,e anche mia nonna,
-               ah povera donna!...Si è commossa sul letto di morte
-               conoscendo la vostra attenzione per i particolari.
-               Pensava di non farcela, e invece..grazie al suo ultimo post
+               la sua azienda su linkedin,
+               che trovo molto stimolante, e anche mia nonna,
+               ah povera donna!..grazie al suo ultimo post
                su linkedin relativo ai metodi per aumentare la produttività 
-               è ritornata a vivere...
-               Desidero prendervi parte, inoltre vorrei dire che
-               console.log(altri_allisciamenti_di_culo).
+               è ripreso ad andare di corpo...
+              
             </p>`;
             messagginoInoIno.style.zIndex = '3';
             this.movementIntervalArray.forEach(interval => { clearInterval(interval); });
@@ -532,7 +546,7 @@ class Game {
         let messagginoInoIno = document.getElementById("alert");
         if (messagginoInoIno != null) {
             messagginoInoIno.innerHTML = `
-            <p>You have been killed</p>
+            <p>You or your baby have been killed</p>
             <p>La natura è fatta così, ora lo sai</p>`;
             messagginoInoIno.style.zIndex = '3';
             this.movementIntervalArray.forEach(interval => { clearInterval(interval); }); //ferma i movimenti dei nemici
@@ -586,56 +600,54 @@ class Game {
         }
         arrayNemici.forEach(e => { e.slave.getDomElement().innerHTML = "C"; });
     }
-    diluvioUniversale() {
-        if (campo != null) {
-            campo.innerHTML = '';
-        }
-    }
 }
 /* main */
-let fuffy;
-let partita;
-let int;
-let playButton = document.getElementsByTagName("button")[0];
-if (sessionStorage.getItem('n_partite') == null) {
-    sessionStorage.setItem('n_partite', `0`);
-}
-gestisciSecondaPartita();
-function gestisciSecondaPartita() {
-    let n_partite;
-    let n_partiteStr = sessionStorage.getItem('n_partite');
-    if (n_partiteStr != null) {
-        n_partite = eval(n_partiteStr);
+function gameManager() {
+    let fuffy;
+    let partita;
+    let int;
+    let playButton = document.getElementsByTagName("button")[0];
+    if (sessionStorage.getItem('n_partite') == null) {
+        sessionStorage.setItem('n_partite', `0`);
     }
-    else {
-        n_partite = -1;
-    }
-    if (n_partite > 0) {
-        fuffy = new Dio();
-        partita = new Game('easy', fuffy);
-        int = setInterval(function () { partita.manageInteractions(); }, 200);
-    }
-}
-playButton.addEventListener("mousedown", function () {
-    let n_partiteStr = sessionStorage.getItem('n_partite');
-    let n_partite = 0;
-    if (n_partiteStr != null) {
-        n_partite = eval(n_partiteStr);
-        switch (n_partite) {
-            case 0:
-                fuffy = new Dio();
-                partita = new Game('easy', fuffy);
-                int = setInterval(function () { partita.manageInteractions(); }, 200);
-                n_partite = 1;
-                sessionStorage.setItem('n_partite', `${n_partite}`);
-                break;
-            default: window.location.reload();
+    gestisciSecondaPartita();
+    function gestisciSecondaPartita() {
+        let n_partite;
+        let n_partiteStr = sessionStorage.getItem('n_partite');
+        if (n_partiteStr != null) {
+            n_partite = eval(n_partiteStr);
+        }
+        else {
+            n_partite = -1;
+        }
+        if (n_partite > 0) {
+            fuffy = new Dio();
+            partita = new Game('easy', fuffy);
+            int = setInterval(function () { partita.manageInteractions(); }, 200);
         }
     }
-    else {
-        console.log("valore per n_partite non trovato in session storage");
-    }
-});
+    playButton.addEventListener("mousedown", function () {
+        let n_partiteStr = sessionStorage.getItem('n_partite');
+        let n_partite = 0;
+        if (n_partiteStr != null) {
+            n_partite = eval(n_partiteStr);
+            switch (n_partite) {
+                case 0:
+                    fuffy = new Dio();
+                    partita = new Game('easy', fuffy);
+                    int = setInterval(function () { partita.manageInteractions(); }, 200);
+                    n_partite = 1;
+                    sessionStorage.setItem('n_partite', `${n_partite}`);
+                    break;
+                default: window.location.reload();
+            }
+        }
+        else {
+            console.log("valore per n_partite non trovato in session storage");
+        }
+    });
+}
+gameManager();
 /*
 let cubo1 = new Cubo('red');
 

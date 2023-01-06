@@ -10,9 +10,6 @@ let babyAudio = new Audio("../audio/eat.mp3");
 let playerBittenAudio = new Audio("../audio/cry.mp3");
 let audioVittoria = new Audio("../audio/slurp_v.mp3");
 let audioSconfitta = new Audio("../audio/slurp.mp3");
-window.addEventListener("mousedown", function () { 
-    crashAudio.play()
-});
 
 /* classi & interfacce */
     class ShapeSlave {//schiavo che sposta la forma assegnatagli, e calcola parametri
@@ -168,6 +165,9 @@ window.addEventListener("mousedown", function () {
                 /*  console.log(this.traslationPower); */
                 this.traslaDX();
                 crashAudio.play();
+                let out = document.getElementById("out")?.children[0];
+                if (out != null) { out.innerHTML = "OMG I have to quit drinking!"; }
+               
             }
             this.traslationPower = p;}
             
@@ -181,6 +181,9 @@ window.addEventListener("mousedown", function () {
                 this.traslationPower = this.getInfoBoundary()[2] - campo?.getBoundingClientRect().left - 4;
                 this.traslaSX()
                 crashAudio.play();
+                let out = document.getElementById("out")?.children[0];
+                if (out != null) { out.innerHTML = "OMG I have to quit drinking!"; }
+               
             }
             this.traslationPower = p;}
             
@@ -194,6 +197,9 @@ window.addEventListener("mousedown", function () {
                 this.traslationPower = this.getInfoBoundary()[3] - campo?.getBoundingClientRect().top - 5;
                 this.traslaUP();
                 crashAudio.play();
+                let out = document.getElementById("out")?.children[0];
+                if (out != null) { out.innerHTML = "OMG I have to quit drinking!"; }
+               
             }
             this.traslationPower = p; }
             
@@ -211,6 +217,9 @@ window.addEventListener("mousedown", function () {
                 console.log(this.traslationPower);
                 this.traslaDN()
                 crashAudio.play();
+                let out = document.getElementById("out")?.children[0];
+                if (out != null) { out.innerHTML = "OMG I have to quit drinking!"; }
+               
             }
             this.traslationPower = p;}
             
@@ -484,9 +493,9 @@ window.addEventListener("mousedown", function () {
             (consulenza, n) => {
                 let result = consulenza.verifyIntersection();
                     switch (0 == 0) {
-                        case n < this.arrayNemici.length: if (result == true) { if (out != undefined) { out.innerHTML = "sei stato morso";} this.ferimento();} break;
+                        case n < this.arrayNemici.length: if (result == true) { if (out != undefined) { out.innerHTML = "OMG a communist!";} this.ferimento();} break;
                         case n == this.arrayNemici.length:  if (result == true) { console.log("vittoria!"); this.vittoria(); } break;
-                        case n > this.arrayNemici.length: if (result == true) { if (out != undefined) { out.innerHTML = "OMG the babyyy"; this.sconfitta();} break; }
+                        case n > this.arrayNemici.length: if (result == true) { if (out != undefined) { out.innerHTML = "OMG my babyyy is getting eaten"; this.sconfitta();} break; }
                         //inserire caso potenziamento    
                     }
             });
@@ -497,32 +506,29 @@ window.addEventListener("mousedown", function () {
         setInterval(function () { if (out != undefined) { out.innerHTML = '';}}, 2000);
         
     }
-    vittoria(): void { 
+    vittoria(): void {
         let messagginoInoIno = document.getElementById("alert");
         if (messagginoInoIno != null) { 
             messagginoInoIno.innerHTML = ` 
             <p>Pomplimenti!</p>
             <p>Da molto tempo seguo con interesse 
-               la sua azienda,
-               che trovo molto stimolante,e anche mia nonna,
-               ah povera donna!...Si è commossa sul letto di morte
-               conoscendo la vostra attenzione per i particolari.
-               Pensava di non farcela, e invece..grazie al suo ultimo post
+               la sua azienda su linkedin,
+               che trovo molto stimolante, e anche mia nonna,
+               ah povera donna!..grazie al suo ultimo post
                su linkedin relativo ai metodi per aumentare la produttività 
-               è ritornata a vivere...
-               Desidero prendervi parte, inoltre vorrei dire che
-               console.log(altri_allisciamenti_di_culo).
+               è ripreso ad andare di corpo...
+              
             </p>`;
             messagginoInoIno.style.zIndex = '3';
             this.movementIntervalArray.forEach(interval => { clearInterval(interval); }); 
         }
         else { console.log("messaggio di vittoria non trovato nel dom!"); }
     }
-    sconfitta(): void { 
+    sconfitta(): void {
         let messagginoInoIno = document.getElementById("alert");
         if (messagginoInoIno != null) { 
             messagginoInoIno.innerHTML = `
-            <p>You have been killed</p>
+            <p>You or your baby have been killed</p>
             <p>La natura è fatta così, ora lo sai</p>`;
             messagginoInoIno.style.zIndex = '3';
             this.movementIntervalArray.forEach(interval => { clearInterval(interval); }); //ferma i movimenti dei nemici
@@ -563,25 +569,20 @@ window.addEventListener("mousedown", function () {
         let mother = document.getElementById(`Fig-${0}`);
         if (mother != null) { mother.innerHTML = "M"; }
         arrayNemici.forEach(e => { e.slave.getDomElement().innerHTML="C"})
-    }
-    diluvioUniversale(): void { 
-        if (campo != null) { campo.innerHTML = '';}
-        
-    }
-        
+    }   
     }
 
 /* main */
-    
+
+function gameManager(): void { //mette insieme tutto quanto sopra per gestire una sesione di partite
     let fuffy: Dio;
     let partita: Game;
-    let int: number;
+    let int: number; 
+    let playButton = document.getElementsByTagName("button")[0];
     
-let playButton = document.getElementsByTagName("button")[0];
-    
-if (sessionStorage.getItem('n_partite') == null) {
+    if (sessionStorage.getItem('n_partite') == null) {
     sessionStorage.setItem('n_partite', `0`);
-}
+    }
     
     gestisciSecondaPartita();
 
@@ -597,7 +598,6 @@ if (sessionStorage.getItem('n_partite') == null) {
                 partita = new Game('easy', fuffy);
                 int = setInterval(function () { partita.manageInteractions() }, 200);
     }}
-
 
     playButton.addEventListener("mousedown", function () { 
 
@@ -625,10 +625,9 @@ if (sessionStorage.getItem('n_partite') == null) {
         
     
     });
- 
-  
+}
 
-     
+gameManager();
 
 /* 
 let cubo1 = new Cubo('red');
