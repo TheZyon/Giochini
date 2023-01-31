@@ -631,7 +631,6 @@ gameManager();
 
 /* 
 let cubo1 = new Cubo('red');
-
 let cubeSlave = new ShapeSlave(cubo1);
 console.log(cubeSlave.shape.shapeIndex);
 cubeSlave.traslaDX()
